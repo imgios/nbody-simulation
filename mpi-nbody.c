@@ -84,9 +84,9 @@ int main (int argc, int ** argv) {
                 particles[i].z += p[i].vz * dt;
             }
         }
+        free(commBuf);
     }
 
-    // Cleanup
     free(buf);
-    free(commBuf);
+    MPI_Finalize();
 }
