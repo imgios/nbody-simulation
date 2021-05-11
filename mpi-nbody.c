@@ -55,9 +55,12 @@ int main (int argc, int ** argv) {
     //Body *p = (Body*)buf;
 
     MPI_Status status;
+    MPI_Datatype bodyType;
 
     // Init MPI env
     MPI_Init(&argc, &argv);
+    MPI_Type_contiguous( 6, MPI_FLOAT, &bodyType);
+    MPI_Type_commit(&bodyType);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
