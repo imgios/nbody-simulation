@@ -52,10 +52,16 @@ int main (int argc, int ** argv) {
     int bytes = nBodies * sizeof(Body);
     float *buf = (float*)malloc(bytes);
     Body *p = (Body*)buf;
+
     MPI_Status status;
 
     // Init MPI env
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank == 0) { // master
+        // Init bodies position and velocity data
+        randomizeBodies(buf, 6*nBodies);
+    }
 }
