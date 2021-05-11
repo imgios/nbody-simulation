@@ -51,7 +51,8 @@ int main (int argc, int ** argv) {
     int nBodies = 30000;
     int bytes = nBodies * sizeof(Body);
     float *buf = (float*)malloc(bytes);
-    Body *p = (Body*)buf;
+    float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
+    //Body *p = (Body*)buf;
 
     MPI_Status status;
 
@@ -63,5 +64,22 @@ int main (int argc, int ** argv) {
     if (rank == 0) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
+
+        // TODO: Send datas to slaves
+    } else { // slaves
+        // TODO: Receive data from master
+        const int nIters = 10; // Simulation iterations
+        const float dt = 0.01f; // Time step
+        Body *particles = (Body*)commBuf;
+        int bodycount; // Number of bodies received
+        for (int iter = 1; iter <= nIters; iter++) {
+            bodyForce(particles, dt, nBodies); // Compute interbody forces
+
+            for (int i = 0; i < nBodies; i++) { // Integrate position
+                particles[i].x += p[i].vx * dt;
+                particles[i].y += p[i].vy * dt;
+                particles[i].z += p[i].vz * dt;
+            }
+        }
     }
 }
