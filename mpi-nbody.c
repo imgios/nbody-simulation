@@ -38,6 +38,13 @@ void bodyForce (Body *p, float dt, int n) {
     }
 }
 
+// Randomize body position and velocity data
+void randomizeBodies(float *data, int n) {
+    for (int i = 0; i < n; i++) {
+        data[i] = 2.0f * (rand() / (float)RAND_MAX) - 1.0f;
+    }
+}
+
 int main (int argc, int ** argv) {
     int numtasks, rank, tag = 1;
     // TODO: Buffer declaration
