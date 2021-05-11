@@ -47,7 +47,11 @@ void randomizeBodies(float *data, int n) {
 
 int main (int argc, int ** argv) {
     int numtasks, rank, tag = 1;
-    // TODO: Buffer declaration
+    // Temporary initialization with fixed data
+    int nBodies = 30000;
+    int bytes = nBodies * sizeof(Body);
+    float *buf = (float*)malloc(bytes);
+    Body *p = (Body*)buf;
     MPI_Status status;
 
     // Init MPI env
