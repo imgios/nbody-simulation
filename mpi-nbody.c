@@ -12,7 +12,13 @@ typedef struct {
     float vx, vy, vz; // velocity
 } Body;
 
-// Body force calculation
+/*
+* This function calculates the body force of each element of the array.
+*
+*   p: array of bodies
+*   dt: delta
+*   n: number of bodies
+*/
 void bodyForce (Body *p, float dt, int n) {
     for (int i = 0; i < n; i++) {
         float Fx = 0.0f;
@@ -38,7 +44,13 @@ void bodyForce (Body *p, float dt, int n) {
     }
 }
 
-// Randomize body position and velocity data
+/*
+* This function randomizes body position and velocity data.
+* It's mainly used for the array initialization.
+*
+*   data: array of bodies
+*   n: number of bodies
+*/
 void randomizeBodies(float *data, int n) {
     for (int i = 0; i < n; i++) {
         data[i] = 2.0f * (rand() / (float)RAND_MAX) - 1.0f;
