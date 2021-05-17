@@ -59,8 +59,9 @@ void randomizeBodies(float *data, int n) {
 
 int main (int argc, int ** argv) {
     int numtasks, rank, tag = 1;
-    // Temporary initialization with fixed data
-    int nBodies = 30000;
+    // Get the number of bodies from input,
+    // and if not specified set it to 30000
+    int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
     int bytes = nBodies * sizeof(Body);
     float *buf = (float*)malloc(bytes);
     float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
