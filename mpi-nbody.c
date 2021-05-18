@@ -82,6 +82,7 @@ int main (int argc, int ** argv) {
     oldtypes[0] = MPI_FLOAT;
     blockcounts[0] = 6;
     MPI_Type_create_struct(1, blockcounts, offsets, oldtypes, &bodytype);
+    MPI_Type_commit(&bodytype);
 
     if (rank == 0) { // master
         // Init bodies position and velocity data
