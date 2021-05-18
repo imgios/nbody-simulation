@@ -68,14 +68,20 @@ int main (int argc, int ** argv) {
     //Body *p = (Body*)buf;
 
     MPI_Status status;
-    MPI_Datatype bodyType;
 
     // Init MPI env
     MPI_Init(&argc, &argv);
-    MPI_Type_contiguous( 6, MPI_FLOAT, &bodyType); // REVIEW: Contiguous or Struct?
-    MPI_Type_commit(&bodyType);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    // Derivated Struct Datatype
+    MPI_Datatype bodytype, oldtypes[1];
+    MPI_Aint offsets[1];
+    int blockcounts[1];
+    offsets[0] = 0;
+    oldtypes[0] = MPI_FLOAT;
+    blockcounts[0] = 6;
+    MPI_Type_create_struct(1, blockcounts, offsets, oldtypes, &bodytype);
 
     if (rank == 0) { // master
         // Init bodies position and velocity data
