@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include "timer.h"
 
 #define SOFTENING 1e-9f
 
@@ -66,6 +65,8 @@ int main (int argc, int ** argv) {
     float *buf = (float*)malloc(bytes);
     float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
     //Body *p = (Body*)buf;
+    // Vars used for time elapsed during computation
+    double start, end;
 
     MPI_Status status;
 
@@ -91,8 +92,7 @@ int main (int argc, int ** argv) {
     MPI_Type_commit(&bodytype);
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
-    // TODO: Time calculation
-
+    start = MPI_Wtime();
 
     if (rank == 0) { // master
         // Init bodies position and velocity data
@@ -138,7 +138,10 @@ int main (int argc, int ** argv) {
     }
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
-    // TODO: Time calculation
+    end = MPI_Wtime();
+    if (rank == 0) { // Master
+        printf("Simulation completed in %f sec.\n", end - start);
+    }
     free(buf);
     MPI_Finalize();
 }
