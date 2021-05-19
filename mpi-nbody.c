@@ -12,23 +12,26 @@ typedef struct {
 } Body;
 
 /*
-* This function calculates the body force of each element of the array.
+* This function calculates the body force of specific element of the array,
+* relating to the others.
 *
 *   p: array of bodies
+*   portionOffset: start of portion where perform simulation
+*   portionSize: number of bodies contained in the portion
 *   dt: delta
-*   n: number of bodies
+*   totalBodies: number of total bodies
 */
-void bodyForce (Body *p, float dt, int n) {
-    for (int i = 0; i < n; i++) {
+void bodyForce (Body *p, int portionOffset, int portionSize, float dt, int totalBodies) {
+    for (int i = 0; i < portionSize; i++) {
         float Fx = 0.0f;
         float Fy = 0.0f;
         float Fz = 0.0f;
 
-        for (int j = 0; j < n; j++) {
-            float dx = p[j].x - p[i].x;
-            float dy = p[j].y - p[i].y;
-            float dz = p[j].z - p[i].z;
-            float distSqr = (dx * dx) + (dy * dy) + (dz * dz) + SOFTENING; // using parenthesis just for reading it more easily
+        for (int j = 0; j < totalBodies; j++) {
+            float dx = p[j].x - p[portionOffset + i].x;
+            float dy = p[j].y - p[portionOffset + i].y;
+            float dz = p[j].z - p[portionOffset + i].z;
+            float distSqr = (dx * dx) + (dy * dy) + (dz * dz) + SOFTENING;
             float invDist = 1.0f / sqrtf(distSqr);
             float invDist3 = invDist * invDist * invDist;
 
@@ -37,9 +40,9 @@ void bodyForce (Body *p, float dt, int n) {
             Fz += dz * invDist3;
         }
 
-        p[i].vx += dt * Fx;
-        p[i].vy += dt * Fy;
-        p[i].vz += dt * Fz;
+        p[portionOffset + i].vx += dt * Fx;
+        p[portionOffset + i].vy += dt * Fy;
+        p[portionOffset + i].vz += dt * Fz;
     }
 }
 
