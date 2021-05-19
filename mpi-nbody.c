@@ -93,6 +93,18 @@ int main (int argc, int ** argv) {
     if (rank == 0) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
+        int sendcount[numtasks];
+
+        for (int i = 0; i < numtasks; i++) {
+            int count = nBodies/numtasks;
+            if (i != numtasks - 1) { // Not the last core
+                sendcount[i] = count;
+            } else { // Last core
+            // If count module > 0 then we give more particles to the last core
+            // If count module = 0 then we give the same amount of particles to all cores
+                sendcount[i] = nBodies - ((numtasks - 1) * (count));
+            }
+        }
 
         // TODO: Send datas to slaves
     } else { // slaves
