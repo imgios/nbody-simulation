@@ -44,6 +44,12 @@ void bodyForce (Body *p, int portionOffset, int portionSize, float dt, int total
         p[portionOffset + i].vy += dt * Fy;
         p[portionOffset + i].vz += dt * Fz;
     }
+
+    for (int i = 0; i < nBodies; i++) { // Integrate position for bodies in portion
+        p[portionOffset + i].x += p[portionOffset + i].vx * dt;
+        p[portionOffset + i].y += p[portionOffset + i].vy * dt;
+        p[portionOffset + i].z += p[portionOffset + i].vz * dt;
+    }
 }
 
 /*
