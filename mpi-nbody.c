@@ -71,7 +71,8 @@ int main (int argc, int ** argv) {
     // and if not specified set it to 30000
     int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
     int bytes = nBodies * sizeof(Body);
-    float *buf = (float*)malloc(bytes);
+    float *particlesBuf = (float*)malloc(bytes);
+    Body *buf = (Body*)particlesBuf;
     //float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
     //Body *p = (Body*)buf;
     // Vars used for time elapsed during computation
@@ -126,10 +127,30 @@ int main (int argc, int ** argv) {
             // by the previous core.
             displacements[i] = sendcount[i-1] + displacements[i-1];
         }
+    }
 
+    const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
+    const float dt = 0.01f; // Time step
+    // Buffer used for gathered data
+    float *tempBuf = (float*)malloc(bytes);
+    Body *gatherBuf = (Body*)tempBuf;
+    for (int iter = 0; iter < nIters; i++) {
         // Send particles array to all cores with a Broadcast
         MPI_Bcast(buf, nBodies, bodytype, 0, MPI_COMM_WORLD);
-    } else { // slaves
+
+        // Every core will compute its own portion
+        bodyForce(buf, displacements[rank], sendcount[rank], dt, nBodies);
+
+        // Gather bodies computed by every single core
+        MPI_Gatherv(buf + displacements[rank], sendcount[rank], bodytype, gatherBuf, sendcount, displacements, bodytype, 0, MPI_COMM_WORLD);
+
+        // Master saves the gathered data inside the buffer before the next iteration
+        if (rank == 0) {
+            buf = gatherBuf;
+        }
+    }
+    
+    /* else { // slaves
         // TODO: Receive data from master
         const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
         const float dt = 0.01f; // Time step
@@ -145,7 +166,7 @@ int main (int argc, int ** argv) {
             }
         }
         free(commBuf);
-    }
+    } */
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
