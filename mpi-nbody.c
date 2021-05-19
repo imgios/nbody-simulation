@@ -121,7 +121,7 @@ int main (int argc, int ** argv) {
         // TODO: Send datas to slaves
     } else { // slaves
         // TODO: Receive data from master
-        const int nIters = 10; // Simulation iterations
+        const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
         const float dt = 0.01f; // Time step
         Body *particles = (Body*)commBuf;
         int bodycount; // Number of bodies received
