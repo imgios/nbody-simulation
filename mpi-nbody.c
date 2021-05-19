@@ -93,7 +93,7 @@ int main (int argc, int ** argv) {
     if (rank == 0) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
-        int sendcount[numtasks];
+        int sendcount[numtasks]; // Contains how many items every rank should receive
 
         for (int i = 0; i < numtasks; i++) {
             int count = nBodies/numtasks;
@@ -104,6 +104,14 @@ int main (int argc, int ** argv) {
             // If count module = 0 then we give the same amount of particles to all cores
                 sendcount[i] = nBodies - ((numtasks - 1) * (count));
             }
+        }
+
+        int displacements[numtasks];
+        displacements[0] = 0; // Master starts from index 0
+        for (int i = 1; i < numtasks; i++) {
+            // Init the displacement using the number of items sent and the index used
+            // by the previous core.
+            displacements[i] = sendcount[i-1] + displacements[i-1];
         }
 
         // TODO: Send datas to slaves
