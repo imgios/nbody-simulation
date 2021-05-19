@@ -134,7 +134,11 @@ int main (int argc, int ** argv) {
     // Buffer used for gathered data
     float *tempBuf = (float*)malloc(bytes);
     Body *gatherBuf = (Body*)tempBuf;
-    for (int iter = 0; iter < nIters; i++) {
+    for (int iter = 1; iter <= nIters; i++) {
+        // Synchronize all cores before starting iteration time
+        MPI_Barrier(MPI_COMM_WORLD);
+        double iterStart = MPI_Wtime();
+
         // Send particles array to all cores with a Broadcast
         MPI_Bcast(buf, nBodies, bodytype, 0, MPI_COMM_WORLD);
 
@@ -144,34 +148,20 @@ int main (int argc, int ** argv) {
         // Gather bodies computed by every single core
         MPI_Gatherv(buf + displacements[rank], sendcount[rank], bodytype, gatherBuf, sendcount, displacements, bodytype, 0, MPI_COMM_WORLD);
 
-        // Master saves the gathered data inside the buffer before the next iteration
+        // Synchronize all cores before taking iteration time
+        MPI_Barrier(MPI_COMM_WORLD);
+        double iterEnd = MPI_Wtime();
+
         if (rank == 0) {
-            buf = gatherBuf;
+            buf = gatherBuf; // Master saves the gathered data inside the buffer before the next iteration
+            printf("Iteration #%d completed in %f seconds.\n", iter, iterEnd - iterStart);
         }
     }
-    
-    /* else { // slaves
-        // TODO: Receive data from master
-        const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
-        const float dt = 0.01f; // Time step
-        Body *particles = (Body*)commBuf;
-        int bodycount; // Number of bodies received
-        for (int iter = 1; iter <= nIters; iter++) {
-            bodyForce(particles, dt, nBodies); // Compute interbody forces
-
-            for (int i = 0; i < nBodies; i++) { // Integrate position
-                particles[i].x += p[i].vx * dt;
-                particles[i].y += p[i].vy * dt;
-                particles[i].z += p[i].vz * dt;
-            }
-        }
-        free(commBuf);
-    } */
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
     if (rank == 0) { // Master
-        printf("Simulation completed in %f sec.\n", end - start);
+        printf("Simulation completed in %f seconds.\n", end - start);
     }
     free(buf);
     MPI_Finalize();
