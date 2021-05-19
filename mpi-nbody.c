@@ -74,6 +74,12 @@ int main (int argc, int ** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    if (numtasks == 1) {
+        // Implement or not the case when the code is ran by a single core?
+        printf("Execute the code with 2 or more cores.\n");
+        return 0;
+    }
+
     // Derivated Struct Datatype
     MPI_Datatype bodytype, oldtypes[1];
     MPI_Aint offsets[1];
