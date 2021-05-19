@@ -66,7 +66,7 @@ int main (int argc, int ** argv) {
     int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
     int bytes = nBodies * sizeof(Body);
     float *buf = (float*)malloc(bytes);
-    float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
+    //float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
     //Body *p = (Body*)buf;
     // Vars used for time elapsed during computation
     double start, end;
@@ -96,11 +96,12 @@ int main (int argc, int ** argv) {
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     start = MPI_Wtime();
+    int sendcount[numtasks]; // Contains how many items every rank should receive
+    int displacements[numtasks]; // Contains the offset for every rank
 
     if (rank == 0) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
-        int sendcount[numtasks]; // Contains how many items every rank should receive
 
         for (int i = 0; i < numtasks; i++) {
             int count = nBodies/numtasks;
@@ -113,7 +114,6 @@ int main (int argc, int ** argv) {
             }
         }
 
-        int displacements[numtasks];
         displacements[0] = 0; // Master starts from index 0
         for (int i = 1; i < numtasks; i++) {
             // Init the displacement using the number of items sent and the index used
@@ -121,7 +121,8 @@ int main (int argc, int ** argv) {
             displacements[i] = sendcount[i-1] + displacements[i-1];
         }
 
-        // TODO: Send datas to slaves
+        // Send particles array to all cores with a Broadcast
+        MPI_Bcast(buf, nBodies, bodytype, 0, MPI_COMM_WORLD);
     } else { // slaves
         // TODO: Receive data from master
         const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
