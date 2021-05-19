@@ -90,6 +90,10 @@ int main (int argc, int ** argv) {
     MPI_Type_create_struct(1, blockcounts, offsets, oldtypes, &bodytype);
     MPI_Type_commit(&bodytype);
 
+    MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
+    // TODO: Time calculation
+
+
     if (rank == 0) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
@@ -133,6 +137,8 @@ int main (int argc, int ** argv) {
         free(commBuf);
     }
 
+    MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
+    // TODO: Time calculation
     free(buf);
     MPI_Finalize();
 }
