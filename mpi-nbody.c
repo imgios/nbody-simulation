@@ -102,6 +102,7 @@ int main (int argc, int ** argv) {
     double start, end;
 
     MPI_Status status;
+    MPI_Request requests[numtasks];
 
     // Init MPI env
     MPI_Init(&argc, &argv);
@@ -185,6 +186,24 @@ int main (int argc, int ** argv) {
         // Sync all cores before starting
         MPI_Barrier(MPI_COMM_WORLD);
         int iterStart = MPI_Wtime();
+        const float dt = 0.01f; // Time step
+        // Send own particles to all cores
+        MPI_Ibcast(workBuf, sendcount[rank], bodytype, rank, MPI_COMM_WORLD, &requests[rank]);
+
+        // Retrieve related particles from other cores
+        int relatedIndex = 0;
+        for (int i = 0; i < numtasks; i++) {
+            if (i != rank) {
+                // Retrieve the offset to start storing related particles
+                // in order to avoid overwrite
+                int relatedOffset =  relatedIndex * sendcount[i-1];
+                if (i == 0) {
+                    relatedOffset = 0;
+                }
+                // Receive related particles from rank i
+                MPI_Ibcast(&relatedParticles[relatedOffset], sendcount[i], bodytype, i, MPI_COMM_WORLD, &requests[i]);
+            }
+        }
         // TODO: Computation
         // Sync all cores to take iteration time
         MPI_Barrier(MPI_COMM_WORLD);
