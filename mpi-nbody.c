@@ -202,6 +202,8 @@ int main (int argc, int ** argv) {
                 }
                 // Receive related particles from rank i
                 MPI_Ibcast(&relatedParticles[relatedOffset], sendcount[i], bodytype, i, MPI_COMM_WORLD, &requests[i]);
+                // Increment relatedIndex in order to calculate different offsets
+                relatedIndex++;
             }
         }
         // TODO: Computation
