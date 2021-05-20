@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #define SOFTENING 1e-9f
+#define MASTER 0
 
 // Struct for Bodies
 typedef struct {
@@ -97,9 +98,8 @@ int main (int argc, int ** argv) {
     int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
     int bytes = nBodies * sizeof(Body);
     float *particlesBuf = (float*)malloc(bytes);
-    Body *buf = (Body*)particlesBuf;
-    //float *commBuf = (float*)malloc(bytes); // TODO: memory leak? Anyway to fix, this is probably too big
-    //Body *p = (Body*)buf;
+    Body *commBuf = (Body*)particlesBuf;
+    Body *workBuf = NULL;
     // Vars used for time elapsed during computation
     double start, end;
 
@@ -131,7 +131,7 @@ int main (int argc, int ** argv) {
     int sendcount[numtasks]; // Contains how many items every rank should receive
     int displacements[numtasks]; // Contains the offset for every rank
 
-    if (rank == 0) { // master
+    if (rank == MASTER) { // master
         // Init bodies position and velocity data
         randomizeBodies(buf, 6*nBodies);
 
@@ -140,11 +140,14 @@ int main (int argc, int ** argv) {
             if (i != numtasks - 1) { // Not the last core
                 sendcount[i] = count;
             } else { // Last core
-            // If count module > 0 then we give more particles to the last core
-            // If count module = 0 then we give the same amount of particles to all cores
+                // If count module > 0 then we give more particles to the last core
+                // If count module = 0 then we give the same amount of particles to all cores
                 sendcount[i] = nBodies - ((numtasks - 1) * (count));
             }
         }
+
+        // Send item counts to all cores
+        MPI_Bcast(sendcount, numtasks, MPI_INT, MASTER, MPI_COMM_WORLD);
 
         displacements[0] = 0; // Master starts from index 0
         for (int i = 1; i < numtasks; i++) {
@@ -152,6 +155,9 @@ int main (int argc, int ** argv) {
             // by the previous core.
             displacements[i] = sendcount[i-1] + displacements[i-1];
         }
+
+        // Split the data array to all cores using a Scatterv
+        MPI_Scatterv(&buf[0], sendcount, displacements, bodytype, &workBuf[0], sendcount[rank], bodytype, MASTER, MPI_COMM_WORLD);
     }
 
     /* const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
