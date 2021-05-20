@@ -20,7 +20,9 @@ typedef struct {
 */
 void bodyForce(Body *p, float dt, int n) {
   for (int i = 0; i < n; i++) { 
-    float Fx = 0.0f; float Fy = 0.0f; float Fz = 0.0f;
+    float Fx = 0.0f;
+    float Fy = 0.0f;
+    float Fz = 0.0f;
 
     for (int j = 0; j < n; j++) {
       float dx = p[j].x - p[i].x;
@@ -30,11 +32,49 @@ void bodyForce(Body *p, float dt, int n) {
       float invDist = 1.0f / sqrtf(distSqr);
       float invDist3 = invDist * invDist * invDist;
 
-      Fx += dx * invDist3; Fy += dy * invDist3; Fz += dz * invDist3;
+      Fx += dx * invDist3;
+      Fy += dy * invDist3;
+      Fz += dz * invDist3;
     }
 
-    p[i].vx += dt*Fx; p[i].vy += dt*Fy; p[i].vz += dt*Fz;
+    p[i].vx += dt*Fx;
+    p[i].vy += dt*Fy;
+    p[i].vz += dt*Fz;
   }
+}
+
+/*
+* This function calculated the body force of a certain array,
+* relating to other bodies.
+*
+*   particles: array of bodies to compute
+*   bodies: number of bodies to compute
+*   relatedParticles: array of related bodies
+*   relatedBodies: number of related bodies
+*/
+void relatedBodyForce(Body *particles, int bodies, Body *relatedParticles, int relatedBodies, float dt) {
+    for (int i = 0; i < bodies; i++) {
+        float Fx = 0.0f;
+        float Fy = 0.0f;
+        float Fz = 0.0f;
+
+        for (int j = 0; j < relatedBodies) {
+            float dx = relatedParticles[j].x - particles[i].x;
+            float dy = relatedParticles[j].y - particles[i].y;
+            float dz = relatedParticles[j].z - particles[i].z;
+            float distSqr = dx*dx + dy*dy + dz*dz + SOFTENING;
+            float invDist = 1.0f / sqrtf(distSqr);
+            float invDist3 = invDist * invDist * invDist;
+
+            Fx += dx * invDist3;
+            Fy += dy * invDist3;
+            Fz += dz * invDist3;
+        }
+
+        particles[i].vx += dt*Fx;
+        particles[i].vy += dt*Fy;
+        particles[i].vz += dt*Fz;
+    }
 }
 
 /*
