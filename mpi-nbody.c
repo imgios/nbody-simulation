@@ -45,7 +45,7 @@ void bodyForce(Body *p, float dt, int n) {
 }
 
 /*
-* This function calculated the body force of a certain array,
+* This function calculates the body force of a certain array,
 * relating to other bodies.
 *
 *   particles: array of bodies to compute
