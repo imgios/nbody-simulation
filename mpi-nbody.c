@@ -222,7 +222,14 @@ int main (int argc, int ** argv) {
                 relatedBodyForce(workBuf, sendcount[rank], &relatedParticles[startOffset], bodiescount);
             }
         }
-        // TODO: Computation
+        
+        // Integrate position for own particles
+        for (int i = 0 ; i < sendcount[rank]; i++) { // integrate position
+            workBuf[i].x += workBuf[i].vx*dt;
+            workBuf[i].y += workBuf[i].vy*dt;
+            workBuf[i].z += workBuf[i].vz*dt;
+        }
+
         // Sync all cores to take iteration time
         MPI_Barrier(MPI_COMM_WORLD);
         int iterEnd = MPI_Wtime();
