@@ -176,6 +176,26 @@ int main (int argc, int ** argv) {
     // Allocate memory for related bodies, useful for the second stage of the computation
     int relatedBodies = nBodies - sendcount[rank]; // total bodies - own bodies
     Body *relatedParticles = (Body*)malloc(sizeof(Body) * relatedBodies);
+
+    // Simulation iterations
+    const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10;
+
+    // Start computing
+    for (int iter = 0; iter < nIters; iter++) {
+        // Sync all cores before starting
+        MPI_Barrier(MPI_COMM_WORLD);
+        int iterStart = MPI_Wtime();
+        // TODO: Computation
+        // Sync all cores to take iteration time
+        MPI_Barrier(MPI_COMM_WORLD);
+        int iterEnd = MPI_Wtime();
+        if (rank == MASTER) {
+            // Master will print a string that indicates the iteration completition
+            printf("Iteration #%d completed in %d seconds.", iter + 1, iterEnd - iterStart);
+        }
+    }
+
+    /*
     const float dt = 0.01f; // Time step
     // Buffer used for gathered data
     float *tempBuf = (float*)malloc(bytes);
