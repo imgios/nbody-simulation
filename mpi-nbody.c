@@ -192,6 +192,8 @@ int main (int argc, int ** argv) {
         if (rank == MASTER) {
             // Master will print a string that indicates the iteration completition
             printf("Iteration #%d completed in %d seconds.", iter + 1, iterEnd - iterStart);
+            // Clear the output buffer and move the buffered data to the console
+            fflush(stdout);
         }
     }
 
