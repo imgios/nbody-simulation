@@ -133,7 +133,7 @@ int main (int argc, int ** argv) {
 
     if (rank == MASTER) { // master
         // Init bodies position and velocity data
-        randomizeBodies(buf, 6*nBodies);
+        randomizeBodies(commBuf, 6*nBodies);
 
         for (int i = 0; i < numtasks; i++) {
             int count = nBodies/numtasks;
@@ -157,7 +157,16 @@ int main (int argc, int ** argv) {
         }
 
         // Split the data array to all cores using a Scatterv
-        MPI_Scatterv(&buf[0], sendcount, displacements, bodytype, &workBuf[0], sendcount[rank], bodytype, MASTER, MPI_COMM_WORLD);
+        MPI_Scatterv(&commBuf[0], sendcount, displacements, bodytype, &workBuf[0], sendcount[rank], bodytype, MASTER, MPI_COMM_WORLD);
+
+        // Store only its own particles
+        workBuf = (Body*)malloc(sizeof(Body) * sendcount[MASTER]);
+        for (int = 0; i < sendcount[MASTER]; i++) {
+            workBuf[i] = commBuf[i];
+        }
+    } else {
+        // Init the work buffer with the size received from master
+        workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
     }
 
     /* const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
