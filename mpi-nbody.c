@@ -173,7 +173,9 @@ int main (int argc, int ** argv) {
         workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
     }
 
-    /* const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
+    // Allocate memory for related bodies, useful for the second stage of the computation
+    int relatedBodies = nBodies - sendcount[rank]; // total bodies - own bodies
+    Body *relatedParticles = (Body*)malloc(sizeof(Body) * relatedBodies);
     const float dt = 0.01f; // Time step
     // Buffer used for gathered data
     float *tempBuf = (float*)malloc(bytes);
