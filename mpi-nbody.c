@@ -206,11 +206,7 @@ int main (int argc, int ** argv) {
                 relatedIndex++;
             }
         }
-
-        // Start computing the bodyforce for own particles
-        // In order to avoid idle states
-        bodyForce(workBuf, dt, sendcount[rank]);
-        // TODO: Loop for every other request, computing relatedBodyForce for each one.
+        // TODO: Computation
         // Sync all cores to take iteration time
         MPI_Barrier(MPI_COMM_WORLD);
         int iterEnd = MPI_Wtime();
