@@ -96,9 +96,7 @@ int main (int argc, int ** argv) {
     // Get the number of bodies from input,
     // and if not specified set it to 30000
     int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
-    int bytes = nBodies * sizeof(Body);
-    float *particlesBuf = (float*)malloc(bytes);
-    Body *commBuf = (Body*)particlesBuf;
+    Body *commBuf = NULL;
     Body *workBuf = NULL;
     // Vars used for time elapsed during computation
     double start, end;
@@ -132,6 +130,9 @@ int main (int argc, int ** argv) {
     int displacements[numtasks]; // Contains the offset for every rank
 
     if (rank == MASTER) { // master
+        int bytes = nBodies * sizeof(Body);
+        float *particlesBuf = (float*)malloc(bytes);
+        Body *commBuf = (Body*)particlesBuf;
         // Init bodies position and velocity data
         randomizeBodies(commBuf, 6*nBodies);
 
@@ -164,6 +165,9 @@ int main (int argc, int ** argv) {
         for (int = 0; i < sendcount[MASTER]; i++) {
             workBuf[i] = commBuf[i];
         }
+
+        // Release unused memory
+        free(commBuf);
     } else {
         // Init the work buffer with the size received from master
         workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
@@ -203,6 +207,5 @@ int main (int argc, int ** argv) {
     if (rank == 0) { // Master
         printf("Simulation completed in %f seconds.\n", end - start);
     }
-    free(buf);
     MPI_Finalize();
 }
