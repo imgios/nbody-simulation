@@ -129,7 +129,7 @@ int main (int argc, int ** argv) {
         }
     }
 
-    const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
+    /* const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10; // Simulation iterations
     const float dt = 0.01f; // Time step
     // Buffer used for gathered data
     float *tempBuf = (float*)malloc(bytes);
@@ -156,7 +156,7 @@ int main (int argc, int ** argv) {
             buf = gatherBuf; // Master saves the gathered data inside the buffer before the next iteration
             printf("Iteration #%d completed in %f seconds.\n", iter, iterEnd - iterStart);
         }
-    }
+    } */
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
