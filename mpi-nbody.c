@@ -206,6 +206,22 @@ int main (int argc, int ** argv) {
                 relatedIndex++;
             }
         }
+
+        // Catch all the request sent from other cores and compute
+        for (int requestsCount = 0; requestsCount < numtasks - 1; requestsCount++) {
+            int reqIndex;
+            MPI_Waitany(numtasks, requests, &reqIndex, &status);
+            // Check if the request is not sent by the same core who is receiving data
+            if (reqIndex != rank) {
+                int bodiescount = sendcount[reqIndex];
+                if (reqIndex > rank) {
+                    reqIndex += -1;
+                }
+                int startOffset = reqIndex * bodiescount;
+                // Compute body force for own particles
+                relatedBodyForce(workBuf, sendcount[rank], &relatedParticles[startOffset], bodiescount);
+            }
+        }
         // TODO: Computation
         // Sync all cores to take iteration time
         MPI_Barrier(MPI_COMM_WORLD);
