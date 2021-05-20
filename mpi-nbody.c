@@ -12,44 +12,29 @@ typedef struct {
 } Body;
 
 /*
-* This function calculates the body force of specific element of the array,
-* relating to the others.
+* This function calculates the body force of every element of the array.
 *
 *   p: array of bodies
-*   portionOffset: start of portion where perform simulation
-*   portionSize: number of bodies contained in the portion
 *   dt: delta
-*   totalBodies: number of total bodies
+*   n: number of total bodies
 */
-void bodyForce (Body *p, int portionOffset, int portionSize, float dt, int totalBodies) {
-    for (int i = 0; i < portionSize; i++) {
-        float Fx = 0.0f;
-        float Fy = 0.0f;
-        float Fz = 0.0f;
+void bodyForce(Body *p, float dt, int n) {
+  for (int i = 0; i < n; i++) { 
+    float Fx = 0.0f; float Fy = 0.0f; float Fz = 0.0f;
 
-        for (int j = 0; j < totalBodies; j++) {
-            float dx = p[j].x - p[portionOffset + i].x;
-            float dy = p[j].y - p[portionOffset + i].y;
-            float dz = p[j].z - p[portionOffset + i].z;
-            float distSqr = (dx * dx) + (dy * dy) + (dz * dz) + SOFTENING;
-            float invDist = 1.0f / sqrtf(distSqr);
-            float invDist3 = invDist * invDist * invDist;
+    for (int j = 0; j < n; j++) {
+      float dx = p[j].x - p[i].x;
+      float dy = p[j].y - p[i].y;
+      float dz = p[j].z - p[i].z;
+      float distSqr = dx*dx + dy*dy + dz*dz + SOFTENING;
+      float invDist = 1.0f / sqrtf(distSqr);
+      float invDist3 = invDist * invDist * invDist;
 
-            Fx += dx * invDist3;
-            Fy += dy * invDist3;
-            Fz += dz * invDist3;
-        }
-
-        p[portionOffset + i].vx += dt * Fx;
-        p[portionOffset + i].vy += dt * Fy;
-        p[portionOffset + i].vz += dt * Fz;
+      Fx += dx * invDist3; Fy += dy * invDist3; Fz += dz * invDist3;
     }
 
-    for (int i = 0; i < nBodies; i++) { // Integrate position for bodies in portion
-        p[portionOffset + i].x += p[portionOffset + i].vx * dt;
-        p[portionOffset + i].y += p[portionOffset + i].vy * dt;
-        p[portionOffset + i].z += p[portionOffset + i].vz * dt;
-    }
+    p[i].vx += dt*Fx; p[i].vy += dt*Fy; p[i].vz += dt*Fz;
+  }
 }
 
 /*
