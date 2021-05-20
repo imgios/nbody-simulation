@@ -241,34 +241,7 @@ int main (int argc, int ** argv) {
         }
     }
 
-    /*
-    const float dt = 0.01f; // Time step
-    // Buffer used for gathered data
-    float *tempBuf = (float*)malloc(bytes);
-    Body *gatherBuf = (Body*)tempBuf;
-    for (int iter = 1; iter <= nIters; i++) {
-        // Synchronize all cores before starting iteration time
-        MPI_Barrier(MPI_COMM_WORLD);
-        double iterStart = MPI_Wtime();
-
-        // Send particles array to all cores with a Broadcast
-        MPI_Bcast(buf, nBodies, bodytype, 0, MPI_COMM_WORLD);
-
-        // Every core will compute its own portion
-        bodyForce(buf, displacements[rank], sendcount[rank], dt, nBodies);
-
-        // Gather bodies computed by every single core
-        MPI_Gatherv(buf + displacements[rank], sendcount[rank], bodytype, gatherBuf, sendcount, displacements, bodytype, 0, MPI_COMM_WORLD);
-
-        // Synchronize all cores before taking iteration time
-        MPI_Barrier(MPI_COMM_WORLD);
-        double iterEnd = MPI_Wtime();
-
-        if (rank == 0) {
-            buf = gatherBuf; // Master saves the gathered data inside the buffer before the next iteration
-            printf("Iteration #%d completed in %f seconds.\n", iter, iterEnd - iterStart);
-        }
-    } */
+    // Master must gather all particles and show results
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
