@@ -241,7 +241,12 @@ int main (int argc, int ** argv) {
         }
     }
 
-    // Master must gather all particles and show results
+    if (rank == MASTER) { // Master must gather all particles and show results
+        // Retrieve the number of bytes to allocate
+        int bytes = nBodies * sizeof(Body);
+        // Realloc the work buffer in order to contain all particles
+        workBuf = (Body*)realloc(workBuf, bytes);
+    }
 
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
