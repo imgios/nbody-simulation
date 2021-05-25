@@ -248,6 +248,9 @@ int main (int argc, int ** argv) {
         commBuf = (Body*)malloc(bytes);
     }
 
+    // Gather all particles to the Master's communication buffer
+    MPI_Gatherv(workBuf, sendcount[rank], bodytype, commBuf, sendcount, displacements, bodytype, MASTER, MPI_COMM_WORLD);
+
     MPI_Barrier(MPI_COMM_WORLD); // Synchronize all cores
     end = MPI_Wtime();
     if (rank == 0) { // Master
