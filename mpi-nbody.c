@@ -255,6 +255,8 @@ int main (int argc, int ** argv) {
     end = MPI_Wtime();
     if (rank == 0) { // Master
         printf("Simulation completed in %f seconds.\n", end - start);
+        double avgTime = (end - start)/(double)(nIters);
+        printf("Avg. iteration time: %f seconds\n", avgTime);
         fflush(stdout);
     }
 
