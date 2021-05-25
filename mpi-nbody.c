@@ -185,7 +185,7 @@ int main (int argc, int ** argv) {
     for (int iter = 0; iter < nIters; iter++) {
         // Sync all cores before starting
         MPI_Barrier(MPI_COMM_WORLD);
-        int iterStart = MPI_Wtime();
+        double iterStart = MPI_Wtime();
         const float dt = 0.01f; // Time step
         // Send own particles to all cores
         MPI_Ibcast(workBuf, sendcount[rank], bodytype, rank, MPI_COMM_WORLD, &requests[rank]);
@@ -232,10 +232,10 @@ int main (int argc, int ** argv) {
 
         // Sync all cores to take iteration time
         MPI_Barrier(MPI_COMM_WORLD);
-        int iterEnd = MPI_Wtime();
+        double iterEnd = MPI_Wtime();
         if (rank == MASTER) {
             // Master will print a string that indicates the iteration completition
-            printf("Iteration #%d completed in %d seconds.", iter + 1, iterEnd - iterStart);
+            printf("Iteration #%d completed in %f seconds.", iter + 1, iterEnd - iterStart);
             // Clear the output buffer and move the buffered data to the console
             fflush(stdout);
         }
