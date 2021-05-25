@@ -256,5 +256,13 @@ int main (int argc, int ** argv) {
     if (rank == 0) { // Master
         printf("Simulation completed in %f seconds.\n", end - start);
     }
+
+    // Cleanup
+    MPI_Type_free(&bodytype);
+    free(workBuf);
+    if (rank == MASTER) {
+        free(commBuf);
+    }
+    
     MPI_Finalize();
 }
