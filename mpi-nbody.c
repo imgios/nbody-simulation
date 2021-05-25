@@ -168,7 +168,7 @@ int main (int argc, int ** argv) {
         }
 
         // Release unused memory
-        free(commBuf);
+        free(particlesBuf);
     } else {
         // Init the work buffer with the size received from master
         workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
