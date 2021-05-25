@@ -59,7 +59,7 @@ void relatedBodyForce(Body *particles, int bodies, Body *relatedParticles, int r
         float Fy = 0.0f;
         float Fz = 0.0f;
 
-        for (int j = 0; j < relatedBodies) {
+        for (int j = 0; j < relatedBodies; j++) {
             float dx = relatedParticles[j].x - particles[i].x;
             float dy = relatedParticles[j].y - particles[i].y;
             float dz = relatedParticles[j].z - particles[i].z;
