@@ -206,6 +206,9 @@ int main (int argc, int ** argv) {
                 relatedIndex++;
             }
         }
+        
+        // Start computing body force for own particles
+        bodyForce(workBuf, dt, sendcount[rank]);
 
         // Catch all the request sent from other cores and compute
         for (int requestsCount = 0; requestsCount < numtasks - 1; requestsCount++) {
@@ -218,7 +221,7 @@ int main (int argc, int ** argv) {
                     reqIndex += -1;
                 }
                 int startOffset = reqIndex * bodiescount;
-                // Compute body force for own particles
+                // Compute body force for own particles relating to others
                 relatedBodyForce(workBuf, sendcount[rank], &relatedParticles[startOffset], bodiescount);
             }
         }
