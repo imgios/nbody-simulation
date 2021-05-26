@@ -222,7 +222,7 @@ int main (int argc, int ** argv) {
                 }
                 int startOffset = reqIndex * bodiescount;
                 // Compute body force for own particles relating to others
-                relatedBodyForce(workBuf, sendcount[rank], &relatedParticles[startOffset], bodiescount);
+                relatedBodyForce(workBuf, sendcount[rank], &relatedParticles[startOffset], bodiescount, dt);
             }
         }
         
