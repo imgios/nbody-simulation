@@ -135,7 +135,7 @@ int main (int argc, int ** argv) {
         float *particlesBuf = (float*)malloc(bytes);
         Body *commBuf = (Body*)particlesBuf;
         // Init bodies position and velocity data
-        randomizeBodies(commBuf, 6*nBodies);
+        randomizeBodies(particlesBuf, 6*nBodies);
 
         for (int i = 0; i < numtasks; i++) {
             int count = nBodies/numtasks;
