@@ -294,6 +294,9 @@ int main (int argc, int ** argv) {
         fprintf(dataset, "}\n");
         // Close the file
         fclose(dataset);
+
+        printf("Report generated into bodies-dataset.json.\n");
+        fflush(stdout);
     }
 
     // Cleanup
