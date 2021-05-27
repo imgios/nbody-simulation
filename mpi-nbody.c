@@ -267,27 +267,27 @@ int main (int argc, char ** argv) {
         // Create and open bodies-dataset.json
         FILE *dataset = fopen("bodies-dataset.json", "w+");
         // Begin json structure
-        fprintf(dataset, '{');
+        fprintf(dataset, "{");
         // Write simulation info
-        fprintf(dataset, '\t"info": {\n');
-        fprintf(dataset, '\t\t"bodies": %d\n', nBodies);
-        fprintf(dataset, '\t\t"interations": %d\n', nIters);
-        fprintf(dataset, '\t\t"simulation-time": %f\n', simulationTime);
-        fprintf(dataset, '\t\t"avg-iteration-time": %f\n', avgTime);
-        fprintf(dataset, '\t},\n', avgTime);
+        fprintf(dataset, "\t\"info\": {\n");
+        fprintf(dataset, "\t\t\"bodies\": %d\n", nBodies);
+        fprintf(dataset, "\t\t\"interations\": %d\n", nIters);
+        fprintf(dataset, "\t\t\"simulation-time\": %f\n", simulationTime);
+        fprintf(dataset, "\t\t\"avg-iteration-time\": %f\n", avgTime);
+        fprintf(dataset, "\t},\n");
         // Write bodies data
         for (int i = 0; i < nBodies; i++) {
-            fprintf(dataset, '\t"body[%d]": {\n', i + 1);
-            fprintf(dataset, '\t\t"x": %f,\n', commBuf[i].x);
-            fprintf(dataset, '\t\t"y": %f,\n', commBuf[i].y);
-            fprintf(dataset, '\t\t"z": %f,\n', commBuf[i].z);
-            fprintf(dataset, '\t\t"vx": %f,\n', commBuf[i].vx);
-            fprintf(dataset, '\t\t"vy": %f,\n', commBuf[i].vy);
-            fprintf(dataset, '\t\t"vz": %f,\n', commBuf[i].vz);
+            fprintf(dataset, "\t\"body[%d]\": {\n", i + 1);
+            fprintf(dataset, "\t\t\"x\": %f,\n", commBuf[i].x);
+            fprintf(dataset, "\t\t\"y\": %f,\n", commBuf[i].y);
+            fprintf(dataset, "\t\t\"z\": %f,\n", commBuf[i].z);
+            fprintf(dataset, "\t\t\"vx\": %f,\n", commBuf[i].vx);
+            fprintf(dataset, "\t\t\"vy\": %f,\n", commBuf[i].vy);
+            fprintf(dataset, "\t\t\"vz\": %f,\n", commBuf[i].vz);
             if (i != nBodies-1) {
-                fprintf(dataset, '\t"},\n',);
+                fprintf(dataset, "\t\"},\n");
             } else {
-                fprintf(dataset, '\t"}\n',);
+                fprintf(dataset, "\t\"}\n");
             }
         }
         // End json structure
