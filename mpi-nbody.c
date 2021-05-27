@@ -91,7 +91,7 @@ void randomizeBodies(float *data, int n) {
     }
 }
 
-int main (int argc, int ** argv) {
+int main (int argc, char ** argv) {
     int numtasks, rank, tag = 1;
     // Get the number of bodies from input,
     // and if not specified set it to 30000
