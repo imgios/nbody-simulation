@@ -163,7 +163,7 @@ int main (int argc, char ** argv) {
 
         // Store only its own particles
         workBuf = (Body*)malloc(sizeof(Body) * sendcount[MASTER]);
-        for (int = 0; i < sendcount[MASTER]; i++) {
+        for (int i = 0; i < sendcount[MASTER]; i++) {
             workBuf[i] = commBuf[i];
         }
 
