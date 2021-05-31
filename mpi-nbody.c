@@ -185,6 +185,7 @@ int main (int argc, char ** argv) {
     Body *relatedParticles = (Body*)malloc(sizeof(Body) * relatedBodies);
 
     // Simulation iterations
+    // BUG: if mpi-nbody.c get ran without arguments nIters equals 0.
     const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10;
 
     if (rank == MASTER) {
