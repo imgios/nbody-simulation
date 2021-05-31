@@ -96,6 +96,7 @@ int main (int argc, char ** argv) {
     // Get the number of bodies from input,
     // and if not specified set it to 30000
     int nBodies = (argv[1] != NULL) ? atoi(argv[1]) : 30000;
+    float *particlesBuf;
     Body *commBuf = NULL;
     Body *workBuf = NULL;
     // Vars used for time elapsed during computation
@@ -132,8 +133,8 @@ int main (int argc, char ** argv) {
 
     if (rank == MASTER) { // master
         int bytes = nBodies * sizeof(Body);
-        float *particlesBuf = (float*)malloc(bytes);
-        Body *commBuf = (Body*)particlesBuf;
+        particlesBuf = (float*)malloc(bytes);
+        commBuf = (Body*)particlesBuf;
         // Init bodies position and velocity data
         randomizeBodies(particlesBuf, 6*nBodies);
 
@@ -147,31 +148,36 @@ int main (int argc, char ** argv) {
                 sendcount[i] = nBodies - ((numtasks - 1) * (count));
             }
         }
+    }
 
-        // Send item counts to all cores
-        MPI_Bcast(sendcount, numtasks, MPI_INT, MASTER, MPI_COMM_WORLD);
+    // Send item counts to all cores
+    MPI_Bcast(sendcount, numtasks, MPI_INT, MASTER, MPI_COMM_WORLD);
 
+    // Init the work buffer with the size received from master
+    workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
+
+    if (rank == MASTER) {
+        // Compute offsets
         displacements[0] = 0; // Master starts from index 0
         for (int i = 1; i < numtasks; i++) {
             // Init the displacement using the number of items sent and the index used
             // by the previous core.
             displacements[i] = sendcount[i-1] + displacements[i-1];
         }
+    }
 
-        // Split the data array to all cores using a Scatterv
-        MPI_Scatterv(&commBuf[0], sendcount, displacements, bodytype, &workBuf[0], sendcount[rank], bodytype, MASTER, MPI_COMM_WORLD);
+    // Master split the data array to all cores using a Scatterv
+    MPI_Scatterv(&commBuf[0], sendcount, displacements, bodytype, &workBuf[0], sendcount[rank], bodytype, MASTER, MPI_COMM_WORLD);
 
+    if (rank == MASTER) {
         // Store only its own particles
-        workBuf = (Body*)malloc(sizeof(Body) * sendcount[MASTER]);
         for (int i = 0; i < sendcount[MASTER]; i++) {
             workBuf[i] = commBuf[i];
         }
 
         // Release unused memory
         free(particlesBuf);
-    } else {
-        // Init the work buffer with the size received from master
-        workBuf = (Body*)malloc(sizeof(Body) * sendcount[rank]);
+        commBuf = NULL;
     }
 
     // Allocate memory for related bodies, useful for the second stage of the computation
