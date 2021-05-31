@@ -194,7 +194,7 @@ int main (int argc, char ** argv) {
         double iterStart = MPI_Wtime(); // Retrieve starting time
         const float dt = 0.01f; // Time step
         int relatedIndex = 0;
-        
+
         for (int n = 0; n < numtasks; n++) {
             if (n == rank) {
                 // If the core n is the root then send own particles to all cores
@@ -278,9 +278,9 @@ int main (int argc, char ** argv) {
         fprintf(dataset, "{");
         // Write simulation info
         fprintf(dataset, "\t\"info\": {\n");
-        fprintf(dataset, "\t\t\"bodies\": %d\n", nBodies);
-        fprintf(dataset, "\t\t\"interations\": %d\n", nIters);
-        fprintf(dataset, "\t\t\"simulation-time\": %f\n", simulationTime);
+        fprintf(dataset, "\t\t\"bodies\": %d,\n", nBodies);
+        fprintf(dataset, "\t\t\"interations\": %d,\n", nIters);
+        fprintf(dataset, "\t\t\"simulation-time\": %f,\n", simulationTime);
         fprintf(dataset, "\t\t\"avg-iteration-time\": %f\n", avgTime);
         fprintf(dataset, "\t},\n");
         // Write bodies data
@@ -291,11 +291,11 @@ int main (int argc, char ** argv) {
             fprintf(dataset, "\t\t\"z\": %f,\n", commBuf[i].z);
             fprintf(dataset, "\t\t\"vx\": %f,\n", commBuf[i].vx);
             fprintf(dataset, "\t\t\"vy\": %f,\n", commBuf[i].vy);
-            fprintf(dataset, "\t\t\"vz\": %f,\n", commBuf[i].vz);
+            fprintf(dataset, "\t\t\"vz\": %f\n", commBuf[i].vz);
             if (i != nBodies-1) {
-                fprintf(dataset, "\t\"},\n");
+                fprintf(dataset, "\t},\n");
             } else {
-                fprintf(dataset, "\t\"}\n");
+                fprintf(dataset, "\t}\n");
             }
         }
         // End json structure
