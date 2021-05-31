@@ -191,23 +191,25 @@ int main (int argc, char ** argv) {
     for (int iter = 0; iter < nIters; iter++) {
         // Sync all cores before starting
         MPI_Barrier(MPI_COMM_WORLD);
-        double iterStart = MPI_Wtime();
+        double iterStart = MPI_Wtime(); // Retrieve starting time
         const float dt = 0.01f; // Time step
-        // Send own particles to all cores
-        MPI_Ibcast(workBuf, sendcount[rank], bodytype, rank, MPI_COMM_WORLD, &requests[rank]);
-
-        // Retrieve related particles from other cores
         int relatedIndex = 0;
-        for (int i = 0; i < numtasks; i++) {
-            if (i != rank) {
+        
+        for (int n = 0; n < numtasks; n++) {
+            if (n == rank) {
+                // If the core n is the root then send own particles to all cores
+                MPI_Ibcast(workBuf, sendcount[rank], bodytype, rank, MPI_COMM_WORLD, &requests[rank]);
+            } else {
+                // If the core n isn't the root then receive related particles
+                // from other cores.
                 // Retrieve the offset to start storing related particles
                 // in order to avoid overwrite
-                int relatedOffset =  relatedIndex * sendcount[i-1];
-                if (i == 0) {
+                int relatedOffset =  relatedIndex * sendcount[n-1];
+                if (n == 0) {
                     relatedOffset = 0;
                 }
-                // Receive related particles from rank i
-                MPI_Ibcast(&relatedParticles[relatedOffset], sendcount[i], bodytype, i, MPI_COMM_WORLD, &requests[i]);
+                // Receive related particles from rank n
+                MPI_Ibcast(&relatedParticles[relatedOffset], sendcount[n], bodytype, n, MPI_COMM_WORLD, &requests[n]);
                 // Increment relatedIndex in order to calculate different offsets
                 relatedIndex++;
             }
