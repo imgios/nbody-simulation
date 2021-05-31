@@ -274,7 +274,7 @@ int main (int argc, char ** argv) {
     end = MPI_Wtime();
     if (rank == 0) { // Master
         double simulationTime = end - start;
-        printf("Simulation completed in %f seconds.\n", simulationTime);
+        printf("\nSimulation completed in %f seconds.\n", simulationTime);
         double avgTime = simulationTime/(double)(nIters);
         printf("Avg. iteration time: %f seconds\n", avgTime);
         printf("Writing results into bodies-dataset.json ...\n");
