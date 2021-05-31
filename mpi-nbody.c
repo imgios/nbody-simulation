@@ -246,7 +246,7 @@ int main (int argc, char ** argv) {
         double iterEnd = MPI_Wtime();
         if (rank == MASTER) {
             // Master will print a string that indicates the iteration completition
-            printf("Iteration #%d completed in %f seconds.", iter + 1, iterEnd - iterStart);
+            printf("Iteration #%d completed in %f seconds.\n", iter + 1, iterEnd - iterStart);
             // Clear the output buffer and move the buffered data to the console
             fflush(stdout);
         }
