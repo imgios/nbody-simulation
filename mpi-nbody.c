@@ -187,6 +187,14 @@ int main (int argc, char ** argv) {
     // Simulation iterations
     const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10;
 
+    if (rank == MASTER) {
+        // Master core will print an info block
+        printf("\n----- n-body simulation -----\n");
+        printf("#bodies:\t%d\n", nBodies);
+        printf("#iterations:\t%d\n", nIters);
+        printf("-----------------------------\n\n");
+    }
+
     // Start computing
     for (int iter = 0; iter < nIters; iter++) {
         // Sync all cores before starting
