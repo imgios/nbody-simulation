@@ -237,7 +237,7 @@ int main (int argc, char ** argv) {
             int reqIndex;
             MPI_Waitany(numtasks, requests, &reqIndex, &status);
             // Check if the request is not sent by the same core who is receiving data
-            if (reqIndex != rank) {
+            if (reqIndex != rank && reqIndex < numtasks) {
                 int bodiescount = sendcount[reqIndex];
                 if (reqIndex > rank) {
                     reqIndex += -1;
@@ -249,7 +249,7 @@ int main (int argc, char ** argv) {
         }
         
         // Integrate position for own particles
-        for (int i = 0 ; i < sendcount[rank]; i++) { // integrate position
+        for (int i = 0 ; i < sendcount[rank]; i++) {
             workBuf[i].x += workBuf[i].vx*dt;
             workBuf[i].y += workBuf[i].vy*dt;
             workBuf[i].z += workBuf[i].vz*dt;
