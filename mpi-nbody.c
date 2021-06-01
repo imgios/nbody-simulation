@@ -186,7 +186,12 @@ int main (int argc, char ** argv) {
 
     // Simulation iterations
     // BUG: if mpi-nbody.c get ran without arguments nIters equals 0.
-    const int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10;
+    int nIters = (argv[2] != NULL) ? atoi(argv[2]) : 10;
+
+    // ! Temporary workaround
+    if (nIters == 0) {
+        nIters = 10;
+    }
 
     if (rank == MASTER) {
         // Master core will print an info block
