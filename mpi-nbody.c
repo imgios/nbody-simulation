@@ -218,7 +218,7 @@ int main (int argc, char ** argv) {
                 // from other cores.
                 // Retrieve the offset to start storing related particles
                 // in order to avoid overwrite
-                int relatedOffset =  relatedIndex * sendcount[n-1];
+                int relatedOffset = relatedIndex * sendcount[n-1];
                 if (n == 0) {
                     relatedOffset = 0;
                 }
