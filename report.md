@@ -10,7 +10,7 @@
     + [Inizializzazione](#inizializzazione)
     + [Computazione](#computazione)
     + [Terminazione](#terminazione)
-- [Esecuzione](#esecuzione)
+- [Compilazione ed Esecuzione](#compilazione-ed-esecuzione)
 - [Benchmarks](#benchmarks)
   * [Scalabilità debole](#scalabilit--debole)
   * [Scalabilità forte](#scalabilit--forte)
@@ -291,7 +291,15 @@ if (rank == MASTER) {
 
 MPI_Finalize();
 ```
-# Esecuzione
+# Compilazione ed Esecuzione
+Per la compilazione ed esecuzione del codice è necessario avere [`OpenMPI`](https://www.open-mpi.org/).
+
+- Compilazione: `mpicc mpi-nbody.c -o nbody -lm`
+- Esecuzione: `mpirun nbody nbodies niters`, dove `nbodies` corrisponde al numero di particelle e `niters` al numero di iterazioni. Di default, questi equivalgono corrispettivamente a `30000` e `10`.
+  * `Read -1, expected ####, errno = 1` durante l'esecuzione in un container docker? Il problema sembra essere relativo al Vader e viene discusso [qui](https://github.com/open-mpi/ompi/issues/4948). Eventuali soluzioni:
+    + `mpirun --mca btl ^vader nbody nbodies niters`
+    + `mpirun --mca btl_vader_single_copy_mechanism none nbody niters`
+
 # Benchmarks
 ## Scalabilità debole
 ## Scalabilità forte
