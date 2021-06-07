@@ -305,6 +305,8 @@ Per la compilazione ed esecuzione del codice è necessario avere [`OpenMPI`](htt
 Al termine dell'esecuzione sarà disponibile il risultato della simulazione all'interno del file `bodies-dataset.json`.
 
 # Benchmarks
+La soluzione è stata testata su un cluster AWS da 8 macchine `m4.large`, ognuna composta da 2 vCPU. I risultati ottenuti vengono espressi in termini di scalabilità debole e scalabilità forte.
+
 ## Scalabilità debole
 ## Scalabilità forte
 ## Risultati
