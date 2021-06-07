@@ -130,7 +130,7 @@ for (int n = 0; n < numtasks; n++) {
 }
 ```
 
-Facendo utilizzo delle comunicazioni non bloccanti, è possibile che i core entrino in uno stato 'idle'. Per sfruttare questa situazione al meglio viene effettuato un primo lavoro di computazione sulle proprie particelle confrotandole soltanto tra loro. Successivamente, per ogni porzione di particelle ricevuta, viene effettuato un secondo lavoro di computazione sulle proprie particelle in relazione a quelle ricevute. Infine, viene effettato un calcolo per integrare la posizione delle proprie particelle.
+Facendo utilizzo delle comunicazioni non bloccanti è possibile che i core entrino in uno stato di stallo. Per sfruttare questa situazione al meglio viene effettuato un primo lavoro di computazione sulle proprie particelle confrotandole soltanto tra loro. Successivamente, per ogni porzione di particelle ricevuta, viene effettuato un secondo lavoro di computazione sulle proprie particelle in relazione a quelle ricevute. Infine, viene effettato un calcolo per integrare la posizione delle proprie particelle.
 
 ```c
 // Start computing body force for own particles
@@ -227,6 +227,8 @@ void relatedBodyForce(Body *particles, int bodies, Body *relatedParticles, int r
   }
 }
 ```
+La differenza tra i due algoritmi consiste nel fatto che il primo algoritmo prende in input un unico array ed effettua i calcoli su tutte le particelle in relazione tra loro, mentre il secondo prende in input due array di particelle ed effettua i calcoli sulle particelle del primo in relazione con quelle del secondo array.
+
 ### Terminazione
 In quest'ultima fase, il core MASTER raccoglie tutte le particelle dagli altri core mediante una Gatherv:
 ```c
@@ -299,6 +301,8 @@ Per la compilazione ed esecuzione del codice è necessario avere [`OpenMPI`](htt
   * `Read -1, expected ####, errno = 1` durante l'esecuzione in un container docker? Il problema sembra essere relativo al Vader e viene discusso [qui](https://github.com/open-mpi/ompi/issues/4948). Eventuali soluzioni:
     + `mpirun --mca btl ^vader nbody nbodies niters`
     + `mpirun --mca btl_vader_single_copy_mechanism none nbody niters`
+
+Al termine dell'esecuzione sarà disponibile il risultato della simulazione all'interno del file `bodies-dataset.json`.
 
 # Benchmarks
 ## Scalabilità debole
