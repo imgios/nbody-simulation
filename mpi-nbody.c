@@ -111,7 +111,6 @@ int main (int argc, char ** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     if (numtasks == 1) {
-        // Implement or not the case when the code is ran by a single core?
         printf("Execute the code with 2 or more cores.\n");
         return 0;
     }
