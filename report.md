@@ -308,5 +308,15 @@ Al termine dell'esecuzione sarà disponibile il risultato della simulazione all'
 La soluzione è stata testata su un cluster AWS da 8 macchine `m4.large`, ognuna composta da 2 vCPU. I risultati ottenuti vengono espressi in termini di scalabilità debole e scalabilità forte.
 
 ## Scalabilità debole
+La scalabilità debole è definita come la variazione del tempo di esecuzione della soluzione a variare del numero di processori utilizzati, con un determinato numero di input che rimane invariato nei vari test. In questo caso, i test sono stati condotti con 50000 particelle e 10 iterazioni.
+
+<!--TODO: results image -->
+
 ## Scalabilità forte
+La scalabilità forte è definita come la variazione del tempo di esecuzione della soluzione a variare del numero di processori utilizzati, con input diverso tra le varie esecuzioni. In questo caso, i test sono stati condotti con:
+- 5000 particelle e 10 iterazioni per processo;
+- 10000 particelle e 10 iterazioni per processo.
+
+<!--TODO: results image -->
+
 ## Risultati
